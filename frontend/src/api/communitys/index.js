@@ -93,9 +93,12 @@ export const ADD_COMMUNITY_JOIN_REQUEST = gql`
 export const GET_CUMMUNITY_JOIN_REQUEST = gql`
   query getCommunityJoinRequests($slug: String!) {
     getCommunityJoinRequests(slug: $slug) {
+      id
       member {
-        id,
-        email,
+        id
+        email
+        firstName
+        lastName
       }
     }
   }
@@ -111,6 +114,20 @@ export const GET_COMMUNITY_MEMBERS = gql`
         city
         profilePic
         country
+      }
+    }
+  }
+`;
+
+export const ACCEPT_COMMUNITY_JOIN_REQUEST = gql`
+  mutation acceptCommunityJoinRequest($id: ID!) {
+    acceptCommunityJoinRequest(id: $id) {
+      success
+      communityJoinReq {
+        id
+        member {
+          id
+        }
       }
     }
   }

@@ -34,6 +34,7 @@ export default function CommunityPage() {
   const location = useRouteMatch();
 
   const [addJoinReq] = useMutation(ADD_COMMUNITY_JOIN_REQUEST);
+  
 
   const { data, loading, error } = useQuery(GET_CURRENT_COMMUNITY_BY_SLUG, {
     variables: { slug: location.params.slug },

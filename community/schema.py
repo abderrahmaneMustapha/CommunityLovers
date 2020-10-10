@@ -22,7 +22,7 @@ class CommunityOwnerType(DjangoObjectType):
 class CommunityJoinRequestCreationType(DjangoObjectType):
     class  Meta :
         model = CommunityJoinRequest
-        fields = ['community', 'member']
+        fields = ['id', 'community', 'member']
 
 ## mutations
 class CommunitysMutation(DjangoModelFormMutation):
@@ -57,11 +57,26 @@ class CommunityJoinRequestCreationMutation(graphene.Mutation):
         community_join_req = CommunityJoinRequest.objects.create(community=Community.objects.get(id=community), member=info.context.user)
         success = True
         return CommunityJoinRequestCreationMutation(community_join_req=community_join_req, success=success)
+
+class CommunityJoinRequestAcceptMutation(graphene.Mutation):
+    class Arguments :
+        id = graphene.ID()
+    
+    success  = graphene.Boolean()
+    community_join_req= graphene.Field(CommunityJoinRequestCreationType)
+
+    @login_required
+    def mutate(root, info, id):
+        community_join_req = CommunityJoinRequest.objects.filter(id=id).update(accepted =True)
+        success = True
+        return CommunityJoinRequestAcceptMutation(community_join_req=community_join_req, success=success)
+     
 ### main mutation
 class Mutation(graphene.ObjectType):
     add_community = CommunitysMutation.Field()
     add_owner_to_community = CommunitysOwnersMutation.Field()
     add_community_join_request = CommunityJoinRequestCreationMutation.Field()
+    accept_community_join_request = CommunityJoinRequestAcceptMutation.Field()
     
 
 

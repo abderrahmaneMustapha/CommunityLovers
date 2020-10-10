@@ -52,9 +52,14 @@ class CommunityJoinRequest(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
+
         owner = CommunityOwner.objects.get(community__pk=self.community.pk)
         if self.member.pk == owner.owner.pk:
             raise Exception("Owner can not join his own community")
+
+        join_req_exists = CommunityJoinRequest.objects.filter(member=self.member, community=self.community).exists()
+        if join_req_exists:
+            raise Exception("Request already sent")
         super(CommunityJoinRequest, self).save(*args, **kwargs)
 
     def __str__(self):

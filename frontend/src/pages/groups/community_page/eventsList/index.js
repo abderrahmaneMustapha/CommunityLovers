@@ -9,9 +9,7 @@ export default function CommunityEventsList(props){
     
     const location = useRouteMatch();
     const history = useHistory()
-    console.log(useQuery(GET_COMMUNITY_EVENTS_BY_SLUG,{
-        variables : { slug: location.params.slug }
-    }))
+   
     const {data, loading , error}= useQuery(GET_COMMUNITY_EVENTS_BY_SLUG,{
         variables : { slug: location.params.slug }
     })
