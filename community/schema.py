@@ -56,7 +56,7 @@ class CommunityJoinRequestCreationMutation(graphene.Mutation):
     def mutate(root, info, community):
         community_join_req = CommunityJoinRequest.objects.create(community=Community.objects.get(id=community), member=info.context.user)
         success = True
-        return CommunityJoinRequestCreationMutation(community=community_join_req, success=success)
+        return CommunityJoinRequestCreationMutation(community_join_req=community_join_req, success=success)
 ### main mutation
 class Mutation(graphene.ObjectType):
     add_community = CommunitysMutation.Field()
@@ -64,7 +64,6 @@ class Mutation(graphene.ObjectType):
     add_community_join_request = CommunityJoinRequestCreationMutation.Field()
     
 
-  
 
 
 ### main query
@@ -96,12 +95,9 @@ class Query(graphene.ObjectType):
     
     @login_required
     def resolve_get_current_user_communitys(root, info):
-        print(info.context.user.first_name)
-        print("current user", CommunityOwner.objects.filter(owner=info.context.user))
         return CommunityOwner.objects.filter(owner__email=info.context.user)
     @login_required
     def resolve_get_current_community_owner_for_community(root, info, slug):
-        print(info.context.user)
         return CommunityOwner.objects.filter(community__slug=slug)
 
     @login_required

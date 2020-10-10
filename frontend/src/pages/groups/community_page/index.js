@@ -41,11 +41,11 @@ export default function CommunityPage() {
 
 
   let handleJoinCommunity = async (event) => {
-    await addJoinReq({
+    addJoinReq({
       variables: {
         community: Number(data.getCommunitysBySlug.community.id),
       },
-    });
+    })
   };
 
   if (error) console.log(error);
@@ -112,7 +112,7 @@ export default function CommunityPage() {
               <Tab title="Join Request">
                  <JoinCommunityRequestList slug={location.params.slug } />
               </Tab>
-              )
+              ) : undefined}
               {is_owner ? (
                 <Tab title="add Events">
                   <Box pad="medium">

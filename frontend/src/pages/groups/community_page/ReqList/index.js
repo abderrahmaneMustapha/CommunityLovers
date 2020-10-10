@@ -4,6 +4,9 @@ import { GET_CUMMUNITY_JOIN_REQUEST, GET_COMMUNITY_MEMBERS } from "../../../../a
 import { Heading, Text, Anchor, Header, Box, Button } from "grommet";
 
 export function JoinCommunityRequestList(props) {
+console.log(useQuery(GET_CUMMUNITY_JOIN_REQUEST, {
+  variables: { slug: props.slug },
+}))
   const { data, loading, error } = useQuery(GET_CUMMUNITY_JOIN_REQUEST, {
     variables: { slug: props.slug },
   });

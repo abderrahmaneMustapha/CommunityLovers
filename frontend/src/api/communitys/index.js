@@ -77,6 +77,7 @@ export const GET_CURRENT_USER_COMMUNITYS = gql`
 export const ADD_COMMUNITY_JOIN_REQUEST = gql`
   mutation addCommunityJoinRequest($community: ID!) {
     addCommunityJoinRequest(community: $community) {
+      success
       communityJoinReq {
         member {
           id
@@ -92,14 +93,25 @@ export const ADD_COMMUNITY_JOIN_REQUEST = gql`
 export const GET_CUMMUNITY_JOIN_REQUEST = gql`
   query getCommunityJoinRequests($slug: String!) {
     getCommunityJoinRequests(slug: $slug) {
-      member{id}
+      member {
+        id,
+        email,
+      }
     }
   }
 `;
 
-export const GET_COMMUNITY_MEMBERS= gql`
-query getCommunityMembers($slug:String!){
-  getCommunityMembers(slug:$slug){
-   member{id,firstName,lastName,city,profilePic,country}
- }
- }`;
+export const GET_COMMUNITY_MEMBERS = gql`
+  query getCommunityMembers($slug: String!) {
+    getCommunityMembers(slug: $slug) {
+      member {
+        id
+        firstName
+        lastName
+        city
+        profilePic
+        country
+      }
+    }
+  }
+`;
