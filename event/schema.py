@@ -1,5 +1,5 @@
 from graphene_django import DjangoObjectType
-from .models import Event
+from .models import Event, EventJoinRequest
 from .forms import EventCreationForm
 import graphene
 from graphql_jwt.decorators import login_required
@@ -10,6 +10,11 @@ class EventType(DjangoObjectType):
     class Meta:
         model = Event
         fields = ['id','name', 'slug', 'event_creator', 'description', 'position', 'start_at', 'end_at']
+
+class EventJoinRequestType(DjangoObjectType):
+     class Meta:
+        model = EventJoinRequest
+        fields = '__all__'
 
 
 class Query(graphene.ObjectType):
@@ -29,7 +34,7 @@ class Query(graphene.ObjectType):
     
 
 
-
+######## mutations ########
 class EventsMutation(DjangoModelFormMutation):
     event =  graphene.Field(EventType)
 
@@ -44,7 +49,42 @@ class EventsMutation(DjangoModelFormMutation):
     class Meta:
         form_class = EventCreationForm
 
+class EventJoinRequestCreationMutation(graphene.Mutation):
+    
+    class Arguments: 
+        event_id = graphene.ID()
+    
+    success  = graphene.Boolean()
+    event_join_req= graphene.Field(EventJoinRequestType)
 
+    @login_required
+    def mutate(root, info, event_id):
+        event_join_req = EventJoinRequest.objects.create(event=Event.objects.get(id=event_id), member=info.context.user)
+        success = True
+        return EventJoinRequest(community_join_req=event_join_req, success=success)
+
+
+
+class EventRequestAcceptMutation(graphene.Mutation):
+    class Arguments: 
+        id = graphene.ID()
+    
+    success  = graphene.Boolean()
+    event_join_req= graphene.Field(EventJoinRequestType)
+
+    @login_required
+    def mutate(root, info, id):      
+        event_join_req = Event.objects.filter(id=id)
+        
+        if (event_join_req.first().get_event_owner() == info.context.user):
+            join_req =  event_join_req.update(accepted =True)
+            community_join_req = community_join_req.first()
+            success = True
+        else:
+            community_join_req = None
+            success = False
+        return EventRequestAcceptMutation(community_join_req=community_join_req, success=success)
+     
 ### main mutation
 class Mutation(graphene.ObjectType):
     add_event =  EventsMutation.Field()
