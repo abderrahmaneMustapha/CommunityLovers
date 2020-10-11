@@ -66,9 +66,16 @@ class CommunityJoinRequestAcceptMutation(graphene.Mutation):
     community_join_req= graphene.Field(CommunityJoinRequestCreationType)
 
     @login_required
-    def mutate(root, info, id):
-        community_join_req = CommunityJoinRequest.objects.filter(id=id).update(accepted =True)
-        success = True
+    def mutate(root, info, id):      
+        community_join_req = CommunityJoinRequest.objects.filter(id=id)
+        
+        if (community_join_req.first().get_community_owner() == info.context.user):
+            join_req =  community_join_req.update(accepted =True)
+            community_join_req = community_join_req.first()
+            success = True
+        else:
+            community_join_req = None
+            success = False
         return CommunityJoinRequestAcceptMutation(community_join_req=community_join_req, success=success)
      
 ### main mutation

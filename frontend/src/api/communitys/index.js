@@ -109,6 +109,7 @@ export const GET_COMMUNITY_MEMBERS = gql`
     getCommunityMembers(slug: $slug) {
       member {
         id
+        email
         firstName
         lastName
         city

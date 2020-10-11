@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import slugify
-
+from .managers import CommunityJoinRequestManager
 import shortuuid
 from base.models import Tag,CustomUser
 # Create your models here.
@@ -35,7 +35,8 @@ class CommunityOwner(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    def get_owner(self):
+        return self.owner
     class Meta:
         verbose_name = "Community owner"
         verbose_name_plural = "Community owners"
@@ -50,9 +51,11 @@ class CommunityJoinRequest(models.Model):
     accepted = models.BooleanField("accept  the user in the community",default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    objects = CommunityJoinRequestManager()
+    def get_community_owner(self):
+        owner= CommunityOwner.objects.get(community=self.community).get_owner()
+        return owner
     def save(self, *args, **kwargs):
-
         owner = CommunityOwner.objects.get(community__pk=self.community.pk)
         if self.member.pk == owner.owner.pk:
             raise Exception("Owner can not join his own community")
