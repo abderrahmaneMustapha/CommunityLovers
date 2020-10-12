@@ -1,7 +1,7 @@
 import React from "react";
 import { useRouteMatch } from "react-router-dom";
-import { useQuery } from "react-apollo";
-import { GET_CURRENT_EVENT } from "../../../api/events/index";
+import { useQuery, useMutation } from "react-apollo";
+import { GET_CURRENT_EVENT, CREATE_EVENT_JOIN_REQUEST } from "../../../api/events/index";
 import {
   Heading,
   Text,
@@ -11,6 +11,7 @@ import {
   Main,
   Box,
   Paragraph,
+  Button,
 } from "grommet";
 import moment from "moment";
 
@@ -21,14 +22,14 @@ const items = [
 
 export default function EventPage() {
   const location = useRouteMatch();
-
+  const [createEventJoinRequest] = useMutation(CREATE_EVENT_JOIN_REQUEST)
   const { data, error, loading } = useQuery(GET_CURRENT_EVENT, {
     variables: { id: location.params.id },
   });
 
   if (error) return <div> Error</div>;
   if (loading) return <div>Loading ... </div>;
-  console.log(data);
+
   return (
     <>
       <Header background="dark-1" pad="small">
@@ -65,6 +66,13 @@ export default function EventPage() {
               created at :{" "}
               {moment(data.getCurrentEvent.createdAt).format("MMM Do YYYY")}{" "}
             </Text>
+            <Button label="join this event" onClick={
+              ()=>{
+                createEventJoinRequest({
+                  variables: {eventId : data.getCurrentEvent.id}
+                })
+              }
+            }></Button>
           </Header>
         </Box>
 

@@ -5,7 +5,7 @@ import graphene
 from graphql_jwt.decorators import login_required
 from graphene_django.forms.mutation import DjangoModelFormMutation
 from graphql import GraphQLError
-
+from datetime import datetime
 class EventType(DjangoObjectType):
     class Meta:
         model = Event
@@ -21,7 +21,7 @@ class Query(graphene.ObjectType):
     all_events = graphene.List(EventType)
     get_community_events_by_slug = graphene.List(EventType, slug=graphene.String())
     get_current_event = graphene.Field(EventType, id=graphene.ID())
-
+    get_event_request_pending = 
     def resolve_all_events(root, info):
         return Event.objects.all()
 
@@ -40,11 +40,20 @@ class EventsMutation(DjangoModelFormMutation):
 
     @login_required
     def resolve_event(root, info, **kwargs):
+        today = datetime.date(datetime.now())
+        if   root.event.start_at  < today  or root.event.end_at < today : 
+            Event.objects.get(pk = root.event.pk).delete()
+            raise Exception("Wrong start at or end at date")
+            return None
+        if   root.event.start_at  > root.event.end_at :             
+            Event.objects.get(pk = root.event.pk).delete()
+            raise Exception("Wrong start at or end at date")
+            return None
         if(info.context.user.pk ==root.event.event_creator.owner.pk):
             return root.event
         else:
             Event.objects.get(pk = root.event.pk).delete()
-            raise Exception("You dont have permission to performe this action")
+            raise Exception("Permission denied")
 
     class Meta:
         form_class = EventCreationForm
@@ -61,7 +70,7 @@ class EventJoinRequestCreationMutation(graphene.Mutation):
     def mutate(root, info, event_id):
         event_join_req = EventJoinRequest.objects.create(event=Event.objects.get(id=event_id), member=info.context.user)
         success = True
-        return EventJoinRequest(community_join_req=event_join_req, success=success)
+        return EventJoinRequestCreationMutation(event_join_req=event_join_req, success=success)
 
 
 
@@ -74,7 +83,7 @@ class EventRequestAcceptMutation(graphene.Mutation):
 
     @login_required
     def mutate(root, info, id):      
-        event_join_req = Event.objects.filter(id=id)
+        event_join_req = EventJoinRequest.objects.filter(event__id=id)
         
         if (event_join_req.first().get_event_owner() == info.context.user):
             join_req =  event_join_req.update(accepted =True)
@@ -89,3 +98,5 @@ class EventRequestAcceptMutation(graphene.Mutation):
 ### main mutation
 class Mutation(graphene.ObjectType):
     add_event =  EventsMutation.Field()
+    create_event_join_request = EventJoinRequestCreationMutation.Field()
+    accept_event_join_request = EventRequestAcceptMutation.Field()

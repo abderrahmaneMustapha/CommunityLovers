@@ -31,6 +31,7 @@ class Event(models.Model):
 class EventJoinRequest(models.Model):
     member =  models.ForeignKey(CustomUser, verbose_name=_("user who sent request"),on_delete=models.CASCADE)
     event = models.ForeignKey(Event, verbose_name=_("request to joing this event"), on_delete=models.CASCADE)
+    accepted = models.BooleanField(_("join request in accepted"), default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
