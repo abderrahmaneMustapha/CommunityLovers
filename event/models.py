@@ -37,6 +37,8 @@ class EventJoinRequest(models.Model):
     def save(self, *args, **kwargs):
         if self.member.pk == self.event.event_creator.owner.pk:
             raise Exception("Owner can not join his own events")
+        if EventJoinRequest.objects.filter(member=self.member, event=self.event).exists():
+            raise Exception("Cant not send multi  join requests")
         super(EventJoinRequest, self).save(*args, **kwargs)
 
     def __str__(self):

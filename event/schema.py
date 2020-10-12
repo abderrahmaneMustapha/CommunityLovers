@@ -4,7 +4,7 @@ from .forms import EventCreationForm
 import graphene
 from graphql_jwt.decorators import login_required
 from graphene_django.forms.mutation import DjangoModelFormMutation
-
+from graphql import GraphQLError
 
 class EventType(DjangoObjectType):
     class Meta:
@@ -78,12 +78,13 @@ class EventRequestAcceptMutation(graphene.Mutation):
         
         if (event_join_req.first().get_event_owner() == info.context.user):
             join_req =  event_join_req.update(accepted =True)
-            community_join_req = community_join_req.first()
+            event_join_req = event_join_req.first()
             success = True
         else:
-            community_join_req = None
+            raise GraphQLError('Permission denied')
+            event_join_req = None
             success = False
-        return EventRequestAcceptMutation(community_join_req=community_join_req, success=success)
+        return EventRequestAcceptMutation(event_join_req=event_join_req, success=success)
      
 ### main mutation
 class Mutation(graphene.ObjectType):
