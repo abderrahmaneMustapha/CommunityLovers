@@ -34,6 +34,8 @@ class EventJoinRequest(models.Model):
     accepted = models.BooleanField(_("join request in accepted"), default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    def get_event_owner(self):
+        return self.event.event_creator.owner
 
     def save(self, *args, **kwargs):
         if self.member.pk == self.event.event_creator.owner.pk:

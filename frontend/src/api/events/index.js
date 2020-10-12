@@ -114,3 +114,18 @@ export const ACCEPT_EVENT_JOIN_REQUEST = gql`
     }
   }
 `;
+
+export const  GET_EVENT_REQUEST_PENDING = gql`query getEventRequestPending($id:ID!){  
+  getEventRequestPending(id:$id){
+    id,
+    member{username,firstName,lastName,email}
+  }
+}`
+
+export const  GET_EVENT_REQUEST_ACCEPTED = gql`query getEventRequestAccepted($id:ID!){  
+  getEventRequestAccepted(id:$id){
+    id,
+    member{id,username,firstName,lastName,email}
+  }
+}`
+

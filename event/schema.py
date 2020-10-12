@@ -21,9 +21,19 @@ class Query(graphene.ObjectType):
     all_events = graphene.List(EventType)
     get_community_events_by_slug = graphene.List(EventType, slug=graphene.String())
     get_current_event = graphene.Field(EventType, id=graphene.ID())
-    get_event_request_pending = 
+    get_event_request_pending = graphene.List(EventJoinRequestType, id=graphene.ID())
+    get_event_request_accepted = graphene.List(EventJoinRequestType, id=graphene.ID())
+
     def resolve_all_events(root, info):
         return Event.objects.all()
+
+    @login_required
+    def resolve_get_event_request_pending(root, info, id):
+        return EventJoinRequest.objects.filter(event__id=id, accepted=False)
+
+    @login_required
+    def resolve_get_event_request_accepted(root, info, id):
+          return EventJoinRequest.objects.filter(event__id=id, accepted=True)
 
     def resolve_get_community_events_by_slug(root, info , slug):
         return Event.objects.filter(event_creator__community__slug=slug)
@@ -83,7 +93,7 @@ class EventRequestAcceptMutation(graphene.Mutation):
 
     @login_required
     def mutate(root, info, id):      
-        event_join_req = EventJoinRequest.objects.filter(event__id=id)
+        event_join_req = EventJoinRequest.objects.filter(id=id)
         
         if (event_join_req.first().get_event_owner() == info.context.user):
             join_req =  event_join_req.update(accepted =True)

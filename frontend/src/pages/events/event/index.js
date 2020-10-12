@@ -1,7 +1,11 @@
 import React from "react";
 import { useRouteMatch } from "react-router-dom";
 import { useQuery, useMutation } from "react-apollo";
-import { GET_CURRENT_EVENT, CREATE_EVENT_JOIN_REQUEST } from "../../../api/events/index";
+import {
+  GET_CURRENT_EVENT,
+  CREATE_EVENT_JOIN_REQUEST,
+} from "../../../api/events/index";
+import { EventJoinRequestList, EventMemebersList } from "./RequestMembers/index";
 import {
   Heading,
   Text,
@@ -12,6 +16,8 @@ import {
   Box,
   Paragraph,
   Button,
+  Tabs,
+  Tab,
 } from "grommet";
 import moment from "moment";
 
@@ -22,7 +28,7 @@ const items = [
 
 export default function EventPage() {
   const location = useRouteMatch();
-  const [createEventJoinRequest] = useMutation(CREATE_EVENT_JOIN_REQUEST)
+  const [createEventJoinRequest] = useMutation(CREATE_EVENT_JOIN_REQUEST);
   const { data, error, loading } = useQuery(GET_CURRENT_EVENT, {
     variables: { id: location.params.id },
   });
@@ -66,17 +72,26 @@ export default function EventPage() {
               created at :{" "}
               {moment(data.getCurrentEvent.createdAt).format("MMM Do YYYY")}{" "}
             </Text>
-            <Button label="join this event" onClick={
-              ()=>{
+            <Button
+              label="join this event"
+              onClick={() => {
                 createEventJoinRequest({
-                  variables: {eventId : data.getCurrentEvent.id}
-                })
-              }
-            }></Button>
+                  variables: { eventId: data.getCurrentEvent.id },
+                });
+              }}
+            ></Button>
           </Header>
         </Box>
 
         <Box width="medium" margin="large" pad="medium">
+          <Tabs>
+            <Tab title="Join requests">
+              <EventJoinRequestList  id={data.getCurrentEvent.id}/>
+            </Tab>
+            <Tab title="Members">
+            <EventMemebersList id={data.getCurrentEvent.id}/>
+            </Tab>
+          </Tabs>
           <Anchor
             label="Go to community page"
             href={`/communities/${data.getCurrentEvent.eventCreator.community.slug}`}
