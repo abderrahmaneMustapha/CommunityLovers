@@ -11,6 +11,7 @@ class Event(models.Model):
     event_creator  = models.ForeignKey(CommunityOwner, verbose_name=_('event creator'),null=True, blank=False, on_delete=models.CASCADE)
     description = models.TextField(max_length=300, null=True, blank=False)    
     position = models.CharField('event place,  city',max_length=200)
+    is_accepted=models.BooleanField(_("event accepted"), default=False)
     start_at = models.DateField(_('event starting date'))
     end_at = models.DateField(_('event ending date'), null=True)
     created_at = models.DateTimeField(auto_now_add=True)

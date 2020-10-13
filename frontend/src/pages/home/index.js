@@ -20,23 +20,24 @@ function Home() {
   return (
     <>
       <Header background="dark-1" pad="small">
-        <Nav direction="row">
+        
           {me ? (
-            <>
+            <Nav direction="row" >
               {items_auth.map((item) => (
-                <Anchor href={item.href} label={item.label} key={item.label} />
-              ))}{" "}
-            </>
+                <Anchor  href={item.href} label={item.label} key={item.label} /> 
+
+              ))}
+            </Nav>
           ) : (
-            <>
+            <Nav direction="row" >
               {items_notauth.map((item) => (
                 <Anchor href={item.href} label={item.label} key={item.label} /> 
-              ))}{" "}
-            </>
+              ))}
+            </Nav>
           )}
-        </Nav>
+       
       </Header>
-      <Main background="dark-1" pad="large">
+      <Main background="dark-1" pad="large" height={{ min: "100vh"}}>
         <Box
           gap="small"
           direction="column"

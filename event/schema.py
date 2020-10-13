@@ -19,6 +19,9 @@ class EventJoinRequestType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     all_events = graphene.List(EventType)
+    get_all_past_events = graphene.List(EventType)
+    get_all_current_events = graphene.List(EventType)
+    get_all_upcoming_events = graphene.List(EventType)
     get_community_events_by_slug = graphene.List(EventType, slug=graphene.String())
     get_current_event = graphene.Field(EventType, id=graphene.ID())
     get_event_request_pending = graphene.List(EventJoinRequestType, id=graphene.ID())
@@ -27,6 +30,20 @@ class Query(graphene.ObjectType):
     def resolve_all_events(root, info):
         return Event.objects.all()
 
+    def resolve_get_all_current_events(root, info):
+        today = datetime.date(datetime.now())
+        return Event.objects.filter(is_accepted=True, start_at__lte=today, end_at__gte=today)
+    
+ 
+    def resolve_get_all_past_events(root, info):
+        today = datetime.date(datetime.now())
+        return Event.objects.filter(is_accepted=True, start_at__lt=today, end_at__lt=today)
+
+    @login_required
+    def resolve_get_all_upcoming_events(root, info):
+        today = datetime.date(datetime.now())  
+        return Event.objects.filter(is_accepted=True, start_at__gt=today,end_at__gt=today)
+    
     @login_required
     def resolve_get_event_request_pending(root, info, id):
         return EventJoinRequest.objects.filter(event__id=id, accepted=False)
