@@ -2,14 +2,13 @@ import React from "react";
 
 import { useQuery } from "react-apollo";
 import { Drop } from "../../../components/lists/drop/index";
-import { ALL_EVENTS } from "../../../api/events/index";
+import { CurrentEvents, PastEvents, UpcomingEvents } from "./EventsList/index";
 import { GET_CURRENT_USER_COMMUNITYS } from "../../../api/communitys/index";
 
 import {
-
   Heading,
-  Text,
-  List,
+  Tabs,
+  Tab,
   Anchor,
   Header,
   Nav,
@@ -18,20 +17,17 @@ import {
   DropButton,
 } from "grommet";
 
-import { useHistory } from "react-router-dom";
 const items = [
   { label: "Create new Community", href: "/create-community" },
   { label: "Logout ", href: "/logout" },
 ];
 
 function Dashboard() {
-  const { loading, error, data } = useQuery(ALL_EVENTS);
   const { data: currentuser_data, loading: currentuser_loading } = useQuery(
     GET_CURRENT_USER_COMMUNITYS
   );
 
   const [open, setOpen] = React.useState();
-  let history = useHistory();
 
   const onOpen = () => {
     setOpen(true);
@@ -40,10 +36,7 @@ function Dashboard() {
     setOpen(false);
   };
 
-
-  if (loading || currentuser_loading) return <div>Loading</div>;
-
-  if (error) console.log(error);
+  if (currentuser_loading) return <div>Loading</div>;
 
   return (
     <>
@@ -77,29 +70,17 @@ function Dashboard() {
         </Box>
 
         <Box gap="medium" pad="large">
-          {data ? (
-            <List data={data.allEvents}>
-              {(element) => (
-                <Box
-                  key={element.id}
-                  onClick={(event) => history.push(`/event/${element.id}`)}
-                  fill
-                >
-                  <Heading level="4">{element.name}</Heading>
-                  <Text size="small">
-                    {" "}
-                    by {element.eventCreator.community.name}
-                  </Text>
-                  <Text size="small"> on {element.startAt}</Text>
-                  <Text size="small"> place {element.position}</Text>
-
-                
-                </Box>
-              )}
-            </List>
-          ) : (
-            <div>Loading...</div>
-          )}
+          <Tabs>
+            <Tab title="Past events">
+              <PastEvents />
+            </Tab>
+            <Tab title="Current events">
+              <CurrentEvents />
+            </Tab>
+            <Tab title="Up comming events">
+              <UpcomingEvents />
+            </Tab>
+          </Tabs>
         </Box>
       </Main>
     </>

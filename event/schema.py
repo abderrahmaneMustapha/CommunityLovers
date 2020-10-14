@@ -28,7 +28,7 @@ class Query(graphene.ObjectType):
     get_event_request_accepted = graphene.List(EventJoinRequestType, id=graphene.ID())
 
     def resolve_all_events(root, info):
-        return Event.objects.all()
+        return Event.objects.filter(is_accepted=True)
 
     def resolve_get_all_current_events(root, info):
         today = datetime.date(datetime.now())
