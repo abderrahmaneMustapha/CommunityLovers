@@ -35,9 +35,9 @@ function Dashboard() {
   const onClose = () => {
     setOpen(false);
   };
-
-  if (currentuser_loading) return <div>Loading</div>;
-
+  if(!currentuser_loading && !currentuser_data ) window.location.reload(false);
+  if (currentuser_loading || !currentuser_data ) return <div>Loading</div>;
+ 
   return (
     <>
       <Header background="dark-1" pad="small">
