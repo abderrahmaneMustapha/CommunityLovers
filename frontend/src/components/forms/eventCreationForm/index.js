@@ -13,18 +13,30 @@ import { RegistrationSuccessHandler } from "../../../utils/handlers/success/inde
 
 import DatePicker from "react-datepicker";
 import { useFormik } from "formik";
-import { Button, Form, FormField as Field, TextArea, Markdown, Layer } from "grommet";
+import {
+    Button,
+    Form,
+    FormField as Field,
+    TextArea,
+    Markdown,
+    Layer,
+    Box,
+    Heading,
+} from "grommet";
+import { Close, View } from "grommet-icons";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function EventCreationForm(props) {
     const [user_id] = useState(props.current_user);
-    const [show, setShow] = React.useState();
     const [createEvent, { data, loading, error }] = useMutation(CREATE_EVENT);
     const [endAtDate, setEndAtDate] = useState(new Date());
     const [startAtDate, setStartAtDate] = useState(new Date());
     const history = useHistory();
     const match = useRouteMatch();
+    const [open, setOpen] = useState(false);
+    const onOpen = () => setOpen(true);
 
+    const onClose = () => setOpen(undefined);
     const formik = useFormik({
         initialValues: {
             name: "",
@@ -99,12 +111,13 @@ export default function EventCreationForm(props) {
                 ) : null}
 
                 <label htmlFor="description"></label>
+                <Button icon={<View />} onClick={onOpen} />
                 <TextArea
                     id="description"
                     name="description"
                     placeholder="your event description"
-                    onChange={  formik.handleChange }
-                    fill
+                    onChange={formik.handleChange}
+                    size="xlarge"
                     resize={false}
                 />
                 {formik.errors.description && formik.touched.description ? (
@@ -152,15 +165,38 @@ export default function EventCreationForm(props) {
                 ></Button>
             </Form>
 
-            <Button label="show" onClick={() => setShow(true)} />
-            {show && (
+            
+            {open && (
                 <Layer
-                    onEsc={() => setShow(false)}
-                    onClickOutside={() => setShow(false)}
-                
+                    onClickOutside={onClose}
+                    onEsc={onClose}
+                    margin={{
+                        left: "40px",
+                        top: "50px",
+                        right: "30px",
+                        bottom: "10px",
+                    }}
                 >
-                    <Button label="close" onClick={() => setShow(false)} />
-                    <Markdown>{formik.values.description}</Markdown>
+                    <Box flex={false} direction="row" justify="between">
+                        <Heading level={2} margin="none">
+                            Description preview
+                        </Heading>
+                        <Button icon={<Close />} onClick={onClose} />
+                    </Box>
+
+                    <Box
+                        width="100vw"
+                        margin={{
+                            left: "2px",
+                            top: "2px",
+                            right: "2px",
+                            bottom: "2px",
+                        }}
+                        height="80vh"
+                        overflow="auto"
+                    >
+                        <Markdown>{formik.values.description}</Markdown>
+                    </Box>
                 </Layer>
             )}
         </>
