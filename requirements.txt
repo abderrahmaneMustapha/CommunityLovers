@@ -17,6 +17,7 @@ psycopg2==2.8.5
 PyJWT==1.7.1
 pytz==2020.1
 Rx==1.6.1
+shortuuid==1.0.1
 singledispatch==3.4.0.3
 six==1.15.0
 sqlparse==0.3.1

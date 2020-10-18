@@ -64,7 +64,8 @@ MIDDLEWARE = [
 CORS_ORIGIN_WHITELIST = [
     #React App domain
     "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    "http://127.0.0.1:3000",
+    "community-lovers.heroku.com"
     
 ]
 
@@ -130,7 +131,10 @@ GRAPHQL_AUTH = {
 
 WSGI_APPLICATION = 'CommunityLovers.wsgi.application'
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
