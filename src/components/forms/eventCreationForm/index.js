@@ -1,0 +1,204 @@
+import React, { useState } from "react";
+
+import { CreateEventSchema } from "./schema/index";
+
+import { useHistory, useRouteMatch } from "react-router-dom";
+
+import { CREATE_EVENT } from "../../../api/events/index";
+import moment from "moment";
+import { useMutation } from "react-apollo";
+
+import { RegistrationErrorHandler } from "../../../utils/handlers/errors/index";
+import { RegistrationSuccessHandler } from "../../../utils/handlers/success/index";
+
+import DatePicker from "react-datepicker";
+import { useFormik } from "formik";
+import {
+    Button,
+    Form,
+    FormField as Field,
+    TextArea,
+    Markdown,
+    Layer,
+    Box,
+    Heading,
+} from "grommet";
+import { Close, View } from "grommet-icons";
+import "react-datepicker/dist/react-datepicker.css";
+
+export default function EventCreationForm(props) {
+    const [user_id] = useState(props.current_user);
+    const [createEvent, { data, loading, error }] = useMutation(CREATE_EVENT);
+    const [endAtDate, setEndAtDate] = useState(new Date());
+    const [startAtDate, setStartAtDate] = useState(new Date());
+    const history = useHistory();
+    const match = useRouteMatch();
+    const [open, setOpen] = useState(false);
+    const onOpen = () => setOpen(true);
+
+    const onClose = () => setOpen(undefined);
+    const formik = useFormik({
+        initialValues: {
+            name: "",
+            description: "",
+            position: "",
+            startAt: startAtDate,
+            endAt: endAtDate,
+        },
+        validationSchema: CreateEventSchema,
+        onSubmit: async (values) => {
+            await new Promise(
+                createEvent({
+                    variables: {
+                        name: values.name,
+                        eventCreator: user_id,
+                        description: values.description,
+                        position: values.position,
+                        startAt: moment(values.startAt).format("YYYY-MM-DD"),
+                        endAt: moment(values.endAt).format("YYYY-MM-DD"),
+                    },
+                }).then((data) => {
+                    if (data.data.addEvent.errors.length < 1) {
+                        let event_id = data.data.addEvent.event.id;
+                        let community_slug = match.params.slug;
+                        history.push(
+                            `/communities/${community_slug}/event/${event_id}`
+                        );
+                    }
+                })
+            );
+        },
+    });
+    if (error) console.log(error);
+    if (loading) return <p>{loading}</p>;
+    return (
+        <>
+            {data ? (
+                <>
+                    <RegistrationErrorHandler
+                        data={data.addEvent}
+                        error_field="messages"
+                    />
+                    <RegistrationSuccessHandler
+                        data={data.addEvent}
+                        message="Event created successfuly you will be redirected soon"
+                    />
+                </>
+            ) : undefined}
+
+            <Form>
+                <label htmlFor="name"></label>
+                <Field
+                    id="name"
+                    name="name"
+                    placeholder="your event name"
+                    type="text"
+                    onChange={formik.handleChange}
+                />
+                {formik.errors.name && formik.touched.name ? (
+                    <div>{formik.errors.name}</div>
+                ) : null}
+
+                <label htmlFor="position"></label>
+                <Field
+                    id="position"
+                    name="position"
+                    placeholder="your event position"
+                    onChange={formik.handleChange}
+                />
+                {formik.errors.position && formik.touched.position ? (
+                    <div>{formik.errors.position}</div>
+                ) : null}
+
+                <label htmlFor="description"></label>
+                <Button icon={<View />} onClick={onOpen} />
+                <TextArea
+                    id="description"
+                    name="description"
+                    placeholder="your event description"
+                    onChange={formik.handleChange}
+                    size="xlarge"
+                    resize={false}
+                />
+                {formik.errors.description && formik.touched.description ? (
+                    <div>{formik.errors.description}</div>
+                ) : null}
+
+                <label htmlFor="startAt">Start at</label>
+                <DatePicker
+                    id="startAt"
+                    name="startAt"
+                    selected={startAtDate}
+                    onChange={(date) => {
+                        let newdate = moment(date).format("YYYY-MM-DD");
+                        setStartAtDate(date);
+                        formik.setFieldValue("startAt", newdate);
+                    }}
+                />
+                <br></br>
+                {formik.errors.startAt && formik.touched.startAt ? (
+                    <div>{formik.errors.startAt}</div>
+                ) : null}
+
+                <label htmlFor="endAt">End at</label>
+                <DatePicker
+                    id="endAt"
+                    name="endAt"
+                    selected={endAtDate}
+                    onChange={(date) => {
+                        let newdate = moment(date).format("YYYY-MM-DD");
+                        setEndAtDate(date);
+                        formik.setFieldValue("endAt", newdate);
+                    }}
+                />
+                <br></br>
+                {formik.errors.endAt && formik.touched.endAt ? (
+                    <div>{formik.errors.endAt}</div>
+                ) : null}
+
+                <Button
+                    primary
+                    color="dark-1"
+                    label="Submit"
+                    onClick={formik.handleSubmit}
+                    type="submit"
+                ></Button>
+            </Form>
+
+            
+            {open && (
+                <Layer
+                    onClickOutside={onClose}
+                    onEsc={onClose}
+                    margin={{
+                        left: "40px",
+                        top: "50px",
+                        right: "30px",
+                        bottom: "10px",
+                    }}
+                >
+                    <Box flex={false} direction="row" justify="between">
+                        <Heading level={2} margin="none">
+                            Description preview
+                        </Heading>
+                        <Button icon={<Close />} onClick={onClose} />
+                    </Box>
+
+                    <Box
+                        width="100vw"
+                        margin={{
+                            left: "2px",
+                            top: "2px",
+                            right: "2px",
+                            bottom: "2px",
+                        }}
+                        height="80vh"
+                        overflow="auto"
+                    >
+                        <Markdown>{formik.values.description}</Markdown>
+                    </Box>
+                </Layer>
+            )}
+        </>
+    );
+}
