@@ -47,5 +47,21 @@
   },
   "devDependencies": {
     "eslint-plugin-react-hooks": "^4.1.2"
-  }
+  },
+  "engines": {
+    "node": "12.16.3",
+    "npm": "6.14.8"
+  },
+  "description": "An open community platform",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abderrahmaneMustapha/CommunityLovers.git"
+  },
+  "author": "toumi abderrahmane",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abderrahmaneMustapha/CommunityLovers/issues"
+  },
+  "homepage": "/"
 }
