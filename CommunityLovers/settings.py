@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-
+import django_heroku
 import os
 
 from datetime import  timedelta 
@@ -202,4 +202,6 @@ STATICFILES_DIRS = [
 ## files and images size  size
 MAX_FILE_SIZE =  20971520
 MAX_IMAGE_SIZE = 20971520
+
+django_heroku.settings(locals())
 
