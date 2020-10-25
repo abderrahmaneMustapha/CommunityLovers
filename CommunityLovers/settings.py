@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'event',
     'community',
     "graphql_auth",
-     'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
+    'graphql_jwt.refresh_token.apps.RefreshTokenConfig',
     'django_filters',
 ]
 
