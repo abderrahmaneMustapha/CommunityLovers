@@ -1,5 +1,5 @@
 # Community Lovers
-An open community platform
+An open community platform similar to meet up
 
 # Frameworks & Technologies 
 python , django , graphql , react , redux
