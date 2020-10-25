@@ -9,7 +9,7 @@ import { onError } from "apollo-link-error";
 ///import { onError } from "apollo-link-error";
 //import { ApolloLink, Observable } from 'apollo-link';
 const httpLink = createHttpLink({
-  uri: "http://localhost:8000/graphql/",
+  uri: "https://community-lovers.herokuapp.com/graphql/",
 });
 
 const getNewToken = () => {
