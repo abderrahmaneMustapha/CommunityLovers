@@ -197,7 +197,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATICFILES_DIRS = [
-    os.path.joi(BASE_DIR, "build/static")
+    os.path.join(BASE_DIR, "build/static")
 ]
 ## files and images size  size
 MAX_FILE_SIZE =  20971520
