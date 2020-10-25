@@ -28,7 +28,7 @@ SECRET_KEY = 'ne%te$tv%93ec@t(5%4wpsdiwe%m#7)pk_*#ge+9a92zxp#7aa'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -65,7 +65,7 @@ CORS_ORIGIN_WHITELIST = [
     #React App domain
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "community-lovers.heroku.com"
+    "community-lovers.herokuapp.com"
     
 ]
 
