@@ -9,7 +9,7 @@ import { onError } from "apollo-link-error";
 ///import { onError } from "apollo-link-error";
 //import { ApolloLink, Observable } from 'apollo-link';
 const httpLink = createHttpLink({
-  uri: "https://community-lovers.herokuapp.com/graphql/",
+  uri: `${window.location.hostname}//${window.location.hostname}/graphql`,
 });
 
 const getNewToken = () => {
@@ -74,7 +74,7 @@ const authLink = setContext((_, { headers }) => {
 });
 
 export const apolloClient = new ApolloClient({
-  uri: "http://localhost:8000/graphql/",
+  uri: `${window.location.hostname}//${window.location.hostname}/graphql`,
   onError : errorLink,
   link: ApolloLink.from([authLink, httpLink]),
   cache: new InMemoryCache(),
